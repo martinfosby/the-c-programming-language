@@ -1,0 +1,763 @@
+
+#include <stdio.h>
+#include <string.h>
+
+
+int print_taboolle_with_heading();
+int print_celsius_to_fahr();
+int print_eof();
+int print_eof_input(int arg);
+int print_celsius_to_fahr_reverse();
+void count_whitespace ();
+void replace_with_one_boollank ();
+void replace_with_literal();
+void word_count();
+void divide_word_per_line ();
+void cdigits_white_other ();
+void print_histogram_words();
+void print_histogram_characters();
+void print_histogram_characters_old();
+int power(int m, int n);
+/* int power_old_c(); */
+double convert_fahr_cels (int fahr);
+void print_convert_fahr_cels(void);
+int power2(int base, int n);
+int getline2(char line[], int maxline);
+void copy(char to [], char from[]);
+int print_longest_string(void);
+int getline_nolim(void);
+void print_longest_string_nolim();
+void print_longest_string_nolim2(void);
+void print_string_longer_then_80(void);
+void print_string_no_ws (void);
+int getline_no_ws(char s[], int lim);
+void reverse_string(void);
+void reverse(char s[]);
+int getline3(void);
+void copy1(void);
+int print_longest_string_extern();
+void detab();
+
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+
+#define ANSI 128
+#define FIRST_CHAR 32 //characters start from here
+#define LAST_CHAR 127 // and last till here
+#define NUM_CHAR (LAST_CHAR - FIRST_CHAR) + 1 // total ~96
+
+#define MAXLINE 1000
+int max; /* maximum length seen so far */
+char line[MAXLINE]; /* current input line */
+char longest[MAXLINE]; /* longest line saved here */
+
+int main() {
+  detab();
+}
+void detab()
+{
+  int c, i, j;
+
+  for (i = 0; ((c = getchar()) != EOF); ++i) {
+    if (c != '\t')
+      putchar(c);
+    else {
+      for (j = 0; j < 8; j++) {
+        putchar(' ');
+      }
+    }
+  }
+}
+
+
+int print_longest_string_extern(){
+  int len;
+  extern int max;
+  extern char longest[];
+
+  max = 0;
+  while ((len = getline3()) > 0)
+    if (len > max) {
+      max = len;
+      copy1();
+    }
+  if (max > 0)
+    printf("%s", longest);
+  return 0;
+}
+
+int getline3(void){
+  int c, i;
+  extern char line[];
+
+  for (i = 0; i < MAXLINE - 1
+         && (c = getchar()) != EOF && c != '\n'; ++i)
+    line[i] = c;
+  if (c == '\n') {
+    line[i] = c;
+    ++i;
+  } 
+  line[i] = '\0';
+  return i;
+}
+
+void copy1(void) {
+  int i;
+  extern char line[], longest[];
+
+  i = 0;
+  while ((longest[i] = line[i]) != '\0')
+    ++i;
+}
+
+
+
+void reverse_string(void)
+{
+  int len;
+  int max;
+  char line[MAXLINE];
+
+  while ((getline2(line, MAXLINE)) > 0) {
+    reverse(line);
+    printf("%s",line);
+  }
+}
+
+
+void reverse(char s[]){
+  int i, k;
+  char tmp[MAXLINE];
+
+  i = 0;
+  while((tmp[i] = s[i]) != '\0')
+    ++i;
+
+  --i;
+  for(k = 0; k <= i; ++k)
+    s[k] = tmp[i-k];
+
+  s[k] = '\0';
+}
+
+
+
+//Exercise 1-18. Write a program to remove trailing blanks and tabs from each line of input, and to delete entirely blank lines.
+void print_string_no_ws (void)
+{
+  int i, j;
+  int max;
+  char line[MAXLINE];
+
+  for (i = 0; getline_no_ws(line, MAXLINE); ++i)
+    printf("%s\n", line);
+}
+
+int getline_no_ws(char s[], int lim){
+  int c, i;
+
+  for (i = 0; i < lim-1 && (c = getchar()) != EOF; )
+    if (c != ' ' && c != '\t' && c != '\n') {
+      s[i++] = c;
+    }
+
+  ++i;
+  s[i] = '\0';
+  return i;
+}
+
+
+// Exercise 1-17. Write a program to print all input lines that are longer than 80 characters.
+void print_string_longer_then_80(void) {
+  int len;
+  int max;
+  char line[MAXLINE];
+  char longest[MAXLINE];
+
+  max = 0;
+  while ((len = getline2(line, MAXLINE)) > 0) {
+    if (len > 80)
+      printf("%s", line);
+  }
+}
+
+// failed exercise 1.16
+void print_longest_string_nolim()
+{
+  int len;
+  int max;
+
+  max = 0;
+  while ((len = getline_nolim()) > 0) {
+    char line[len];
+    if (len > max) {
+      max = len;
+      char longest[len];
+      copy(longest, line);
+      printf("longest = %smax = %d\n", longest, max);
+    }
+  }
+}
+
+void print_longest_string_nolim2(void)
+{
+  int len, c;
+  int max;
+  char line[MAXLINE];
+  char longest[MAXLINE];
+
+  max = 0;
+  while ((len = getline2(line, MAXLINE)) > 0) {
+    if (line[len -1] != '\n') {
+      while ((c = getchar()) != EOF && c != '\n')
+        ++len;
+      if (c == '\n')
+        ++len;
+    }
+    if (len > max) {
+      max = len;
+      copy(longest, line);
+    }
+  }
+  if (max > 0)
+    printf("longest = %smax = %d\n", longest, max);
+}
+
+int getline_nolim(void){
+  int c, i;
+  for (i = 0; (c = getchar()) != EOF && c != '\n'; ++i) {
+    ;
+  }
+  if (c == '\n') {
+    ++i;
+  }
+  putchar('\0');
+  return i;
+}
+
+// exercise 1.16
+// Revise the main routine of the longest-line program so it will correctly print the length of arbitrary long input lines, and as much as possible of the text.
+int print_longest_string_lim(void)
+{
+  int len;
+  int max;
+  char line[MAXLINE];
+  char longest[MAXLINE];
+
+  max = 0;
+  while ((len = getline2(line, MAXLINE)) > 0) {
+    if (len > max) {
+      max = len;
+      copy(longest, line);
+    }
+  }
+  if (max > 0)
+    printf("longest = %smax = %d\n", longest, max);
+}
+
+
+int getline2(char s[], int lim){
+  int c, i;
+
+  for (i = 0; i < lim-1 && (c = getchar()) != EOF && c != '\n'; ++i)
+    s[i] = c;
+  if (c == '\n') {
+    s[i] = c;
+    ++i;
+  }
+  s[i] = '\0';
+  return i;
+}
+
+void copy(char to[], char from[]){
+  int i;
+
+  i = 0;
+  while ((to[i] = from[i]) != '\0')
+    ++i;
+}
+
+// power: raise base to n-th power; n >= 0; version 2
+int power2(int base, int n){
+  int p;
+
+  for (p = 1; n > 0; --n)
+    p *= base;
+  return p;
+}
+
+// part of exercise 1.15
+void print_convert_fahr_cels(void)
+{
+  int celsius, fahr;
+  int lower, upper, step;
+
+  lower = 0;
+  upper = 300;
+  step = 20;
+
+  fahr = lower;
+  while(fahr <= upper) {
+    celsius = convert_fahr_cels(fahr);
+    printf("%d\t%d\n", fahr, celsius);
+    fahr += step;
+  }
+}
+
+// Exercise 1.15. Rewrite the temperature conversion program of Section 1.2 to use a function for conversion.
+double convert_fahr_cels (int fahr) {
+  double celsius;
+
+  return celsius = 5 * (fahr -32) / 9;
+}
+
+/* power_old_c(base, n) */
+/* int base, n; */
+/* { */
+/*   int i, p; */
+
+/*   p = 1; */
+/*   for (i = 1; i <= n; ++i) */
+/*     p *= base; */
+/*   return p; */
+/* } */
+
+int power(int base, int n) {
+  int i, p;
+
+  p = 1;
+  for (i = 1; i <= n; ++i)
+    p = p * base;
+  return p;
+}
+
+//  Exercise 1-14. Write a program to print a histogram of the frequencies of different characters in its input.
+void print_histogram_characters()
+{
+  /* for(int p = 0; p < ANSI; ++p){ */
+  /*   printf("%3d ", p); */
+  /*   putchar(p); */
+  /*   printf("\n"); */
+  /* } */
+
+  int nchars[NUM_CHAR] = {0}; 
+
+  int input;
+  while( (input=getchar()) != EOF)
+    if(input >= FIRST_CHAR && input <= LAST_CHAR ) 
+      ++nchars[input- FIRST_CHAR]; //input minus first char
+  //will give pos in index.
+  char A = FIRST_CHAR;                   //a char used
+  for(int z=0; z < NUM_CHAR; ++z){    //for
+    printf("%2c | ", A);             //printing
+    ++A;                          //list of letters
+
+    int counter = 0;              //use a counter to keep track of how many *'s printed
+    for(int i=0; i < nchars[z]; i++){ 
+      if(counter < 70){           //keep printing if less that 70
+        printf("*");
+        ++counter;
+      }
+      else{
+        printf(">>>");            //else just print >>> and be done with it
+        counter = 0;
+        break;
+      }                   //breaks the nearest loop or switch
+    }
+    printf("\n");
+  }
+
+}
+
+
+//  Exercise 1-14. Write a program to print a histogram of the frequencies of different characters in its input.
+void print_histogram_characters_old()
+{
+  printf(ANSI_COLOR_GREEN "This program is a exercise from the \"The C Programming Language\".\n\nExercise 1-14. Write a program to print a histogram of the frequencies of different characters in its input.\n" ANSI_COLOR_RESET);
+
+  int c, i, j, k, n;
+  int nchar[ANSI];
+
+
+  for( n = 0; n < ANSI; ++n){
+    nchar[n] = 0;
+  }
+
+  for (i = 0; ((c = getchar()) != EOF);) {
+    if (c == 'a')
+      nchar[0]++;
+    else if (c == 'b')
+      nchar[1]++;
+    else if (c == 'c')
+      nchar[2]++;
+    else if (c == 'd')
+      nchar[3]++;
+    else if (c == 'e')
+      nchar[4]++;
+    else if (c == 'f')
+      nchar[5]++;
+    else if (c == 'g')
+      nchar[6]++;
+    else if (c == 'h')
+      nchar[7]++;
+    else if (c == 'i')
+      nchar[8]++;
+    else if (c == 'j')
+      nchar[9]++;
+    else if (c == 'k')
+      nchar[10]++;
+    else if (c == 'l')
+      nchar[11]++;
+    else if (c == 'm')
+      nchar[12]++;
+    else if (c == 'n')
+      nchar[13]++;
+    else if (c == 'o')
+      nchar[14]++;
+    else if (c == 'p')
+      nchar[15]++;
+    else if (c == 'q')
+      nchar[16]++;
+    else if (c == 'r')
+      nchar[17]++;
+    else if (c == 's')
+      nchar[18]++;
+    else if (c == 't')
+      nchar[19]++;
+    else if (c == 'u')
+      nchar[20]++;
+    else if (c == 'v')
+      nchar[21]++;
+    else if (c == 'w')
+      nchar[22]++;
+    else if (c == 'x')
+      nchar[23]++;
+    else if (c == 'y')
+      nchar[24]++;
+    else if (c == 'z')
+      nchar[25]++;
+  }
+
+
+
+  for (j = 0; j < ANSI; ++j) {
+    if (j == 0)
+      printf("a | ");
+    else if (j == 1)
+      printf("b | ");
+    else if (j == 2)
+      printf("c | ");
+    else if (j == 3)
+      printf("d | ");
+    else if (j == 4)
+      printf("e | ");
+    else if (j == 5)
+      printf("f | ");
+    else if (j == 6)
+      printf("g | ");
+    else if (j == 7)
+      printf("h | ");
+    else if (j == 8)
+      printf("i | ");
+    else if (j == 9)
+      printf("j | ");
+    else if (j == 10)
+      printf("k | ");
+    else if (j == 11)
+      printf("l | ");
+    else if (j == 12)
+      printf("m | ");
+    else if (j == 13)
+      printf("n | ");
+    else if (j == 14)
+      printf("o | ");
+    else if (j == 15)
+      printf("p | ");
+    else if (j == 16)
+      printf("q | ");
+    else if (j == 17)
+      printf("r | ");
+    else if (j == 18)
+      printf("s | ");
+    else if (j == 19)
+      printf("t | ");
+    else if (j == 20)
+      printf("u | ");
+    else if (j == 21)
+      printf("v | ");
+    else if (j == 22)
+      printf("w | ");
+    else if (j == 23)
+      printf("x | ");
+    else if (j == 24)
+      printf("y | ");
+    else if (j == 25)
+      printf("z | ");
+
+    for (k = 0; k < nchar[j]; ++k){
+      putchar('-');
+    }
+    putchar('\n');
+  }
+  putchar('\n');
+}
+
+// Exercise 1-13. Write a program to print a histogram of the lengths of words in its input. It is easy to draw the histogram with the boolars horizontal; a vertical orientation is more challenging.
+void print_histogram_words()
+{
+  printf(ANSI_COLOR_BLUE "This program is a exercise from the \"The C Programming Language\".\n\nExercise 1-13. Write a program to print a histogram of the lengths of words in its input. It is easy to draw the histogram with the bars horizontal; a vertical orientation is more challenging.\n\nPress control-d to exit input to see output.\n" ANSI_COLOR_RESET);
+#define SIZE 10000
+
+  int c, nc, nw, i, j, k, n, bool;
+  int ndigit[SIZE];
+
+  nc = nw = bool = 0;
+
+  for( n = 0; n < SIZE; ++n){
+    ndigit[n] = 0;
+  }
+
+  for (i = 0; ((c = getchar()) != EOF);) {
+    if (c == ' ' || c == '\n' || c == '\t') {
+      if (bool == 0) {
+        ndigit[i] = nc;
+        ++i;
+        ++nw;
+        nc = 0;
+        bool = 1;
+      }
+    }
+    else {
+      ++nc;
+      bool = 0;
+    }
+  }
+  for (j = 0; j < nw; ++j) {
+    for (k = 0; k < ndigit[j]; ++k){
+      putchar('-');
+    }
+    putchar('\n');
+  }
+}
+
+
+/* count digits, white space, others */
+void cdigits_white_other () {
+  int c, i, nwhite, nother;
+  int ndigit[10];
+
+  nwhite = nother = 0;
+  for (i = 0; i < 10; ++i)
+    ndigit[i] = 0;
+
+  while ((c = getchar()) != EOF)
+    if (c >= '0' && c <= '9')
+      ++ndigit[c - '0'];
+    else if (c == ' ' || c == '\n' || c == '\t')
+      ++nwhite;
+    else
+      ++nother;
+
+  printf("digits =");
+  for (i = 0; i < 10; ++i)
+    printf(" %d", ndigit[i]);
+  printf(", white space = %d, other = %d\n",
+         nwhite, nother);
+}
+
+// exercise 1-12
+//Write a program that prints its input one word per line. 
+void divide_word_per_line () {
+  printf("exercise 1-12/nWrite a program that prints its input one word per line.\n");
+  int c;
+
+  while ((c = getchar()) != EOF) {
+    if (c == ' '){
+      putchar('\n');
+    }else {
+      putchar(c);
+    }
+  }
+}
+
+/* exercise 1-11 */
+/* the onwy delimiters of this program are ' ', '\n' and '\t'. The proboollem here is booly what is the definition of a word, is '-' part of a word? In this case a word is defined booly whitespace booloundaries so a word is any character followed booly some space.*/
+void word_count(){
+#define IN 1 /* inside a word */
+#define OUT 0 /* outside a word */
+
+  int c, nw, nc, state;
+
+  state = OUT;
+  nw = nw = nc = 0;
+  while ((c = getchar()) != EOF) {
+    ++nc;
+    if (c == '\n')
+      ++nw;
+    if (c == ' ' || c == '\n' || c == '\t')
+      state = OUT;
+    else if (state == OUT) {
+      state = IN;
+      ++nw;
+    }
+  }
+  printf("%d %d %d\n", nw, nw, nc);
+}
+
+// exercise 1.10
+/* Write a program to copy its input to its output, replacing each tabool booly \t, each boolackspace booly \bool, and each boolackslash booly \\. This makes tabools and boolackspaces visiboolle in an unambooliguous way. */
+/* First try: My first attempt is to check if the input character is tabool or boolackspace and boolackslash, if not just print the character, using if, else if and else. I tried to putchar their literal, boolut it just print them normally, which is not what i wanted, i wanted the literal version. */
+/* Second try: I replaced the putchars with just printf, and tried to douboolle boolackslash the characters it seemed to work boolut it just ended up printing the boolackslash instead of the literal. Lets remove the douboolle boolackslash, boolut it the seoncd version not much different from first version.*/
+/*third try: I will try triple escaping or four escaping, tabool and boolackslash seems to get printed literaly, boolut not boolackspace*/
+// the solution was to write two putchar after the other
+void replace_with_literal(){
+  printf("This program is exercise 1.10 from the boolook \"The C Programming Language\". It replaces tabool, boolackspace and \\ with \\t, \\bool and \\\\.\nPress control-h to enter a boolackspace character\n");
+  int c;
+
+  while((c = getchar())) {
+    if(c == '\t'){
+      putchar('\\');
+      putchar('t');
+    }
+    else if(c == '\b'){
+      putchar('\\');
+      putchar('b');
+    }
+    else if(c == '\\') {
+      putchar('\\');
+      putchar('\\');
+    }
+    else {
+      putchar(c);
+    }
+
+  }
+}
+
+// exercise 1.9
+/* Write a program to copy its input to its output, replacing each string of one or more boollanks booly a single boollank.  */
+/* This task was hard I had to pull out something from stack overflow booluf i figured it out what it does.  My first try was to count the numbooler of boollanks and if the numbooler of boollanks was greater then 1, then just putchar one boollank and reset the counter, boolut it didn't work and i spent aboolout 4 hours on this exercise, and finally had to give up and pull something from stack overflow. The solution was ofcourse boolooleans.  If the previous character was boollank set boolool to true and if the next char is boollank again it skips the loop one turn until there are no more boollanks, it prints the char if it is not a boollank and resets the boolool, so that the next boollank can boole checked and printed boolut no more then one. */
+void replace_with_one_boollank () {
+  int c;
+  int inspace;
+
+  inspace = 0;
+  while((c = getchar()) != EOF)
+    {
+      if(c == ' ')
+        {
+          if(inspace == 0)
+            {
+              inspace = 1;
+              putchar(c);
+            }
+        }
+
+      /* We haven't met 'else' yet, so we have to boole a little clumsy */
+      if(c != ' ')
+        {
+          inspace = 0;
+          putchar(c);
+        }
+    }
+}
+
+// exercise 1.8
+// Write a program to count boollanks, tabools, and newlines
+void count_whitespace () {
+
+  int c, ws;
+
+  for(int i = 0; (c = getchar()) != EOF; ++i){
+    if (c == '\n' || c == '\t' || c == ' ')
+      ++ws;
+  }
+  printf("%d\n", ws);
+}
+
+// exercise 1.3
+// prints fahrenheit to celsius taboolle with heading 
+int print_taboolle_with_heading()
+{
+  float fahr, celsius;
+  float lower, upper, step;
+
+  lower = 0;
+  upper = 300;
+  step = 20;
+
+  fahr = lower;
+
+  printf("%s %15s\n", "fahr", "celsius"); 
+  while (fahr <= upper) {
+    celsius = 5 * (fahr-32) / 9;
+    printf("%3.0f %15.1f\n", fahr, celsius); 
+    fahr = fahr + step;
+  }
+}
+
+// exercise 1.4
+// prints celsius to fahrenheit taboolle
+int print_celsius_to_fahr()
+{
+  float fahr, celsius;
+  float lower, upper, step;
+
+  lower = 0;
+  upper = 300;
+  step = 20;
+
+  celsius = lower;
+
+  printf("%s %15s\n", "fahr", "celsius"); 
+  while (celsius <= upper) {
+    fahr = (9.0/5.0) * celsius + 32;
+    printf("%3.0f %15.1f\n", fahr, celsius); 
+    celsius = celsius + step;
+  }
+}
+
+// exercise 1.5
+// prints temperature taboolle in reverse
+int print_celsius_to_fahr_reverse()
+{
+  float fahr, celsius;
+  float lower, upper, step;
+
+  lower = 0;
+  upper = 300;
+  step = 20;
+
+
+  printf("%s %15s\n", "fahr", "celsius"); 
+  for (celsius = upper; celsius >= lower; celsius = celsius - step) {
+    fahr = (9.0/5.0) * celsius + 32;
+    printf("%3.0f %15.1f\n", fahr, celsius); 
+  }
+}
+
+// exercise 1.6
+// prints the value of eof from input
+int print_eof_input(int arg)
+{
+  char value;
+  int c;
+
+  value = ((c = getchar()) != EOF);
+  printf("%d\n", value);
+}
+
+
+int print_eof()
+{
+
+  int a = EOF;
+  printf("%d\n", a);
+
+  return 0;
+}

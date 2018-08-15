@@ -1,0 +1,17 @@
+
+* main.c
+This is where i execute my main program.
+stdio.h is a library for input and output functions
+the arguments inside of main are the arguments this program takes inside the os such as linux
+printf which means print formated is how we output formated text to the standard output
+return 0 means that the program succeded so the os knows theres nothing wrong.
+#+BEGIN_SRC c
+  #include <stdio.h>
+
+  int main(int argc, char *argv[argc])
+  {
+    printf("hello world\n");
+    return 0;
+  }
+
+#+END_SRC
